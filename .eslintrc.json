@@ -20,7 +20,7 @@
         "default-case-last": "warn",
         "default-case": "warn",
         "curly": "warn",
-        "no-unused-vars": "error",
+        "no-unused-vars": "warn",
         "no-undef": "error",
         "no-var": "error",
         "no-console": "warn",

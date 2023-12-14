@@ -1,5 +1,9 @@
+/* eslint-disable @typescript-eslint/no-this-alias */
 import { Schema, model } from 'mongoose';
 import { TAddress, TFullName, TUser } from './users.interface';
+
+import bcrypt from 'bcrypt';
+import config from '../../config';
 
 const fullNameSchema = new Schema<TFullName>({
   firstName: {
@@ -50,7 +54,7 @@ const userSchema = new Schema<TUser>({
     maxlength: [20, 'Password can not be more than 20 characters'],
   },
   fullName: {
-    fullNameSchema,
+    type: fullNameSchema,
     required: [true, 'fullname is required. Please provide the name.'],
   },
   age: {
@@ -71,7 +75,7 @@ const userSchema = new Schema<TUser>({
     default: [],
   },
   address: {
-    addressSchema,
+    type: addressSchema,
     required: [true, 'address is required'],
   },
   orders: [
@@ -84,6 +88,23 @@ const userSchema = new Schema<TUser>({
       quantity: { type: Number, required: [true, 'Quantity is required.'] },
     },
   ],
+});
+
+userSchema.pre('save', async function (next) {
+  const user = this;
+  console.log('pre hook:', this);
+  user.password = await bcrypt.hash(
+    user.password,
+    Number(config.bcrypt_salt_rounds),
+  );
+  next();
+});
+
+//post save middleware/hook
+userSchema.post('save', function (doc, next) {
+  console.log(this, 'post hook : we saved our data');
+  doc.password = '';
+  next();
 });
 
 export const UserModel = model<TUser>('User', userSchema);
