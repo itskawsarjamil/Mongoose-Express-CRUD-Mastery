@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-this-alias */
 import { Schema, model } from 'mongoose';
-import { TAddress, TFullName, TUser } from './users.interface';
+import { IUserModel, TAddress, TFullName, TUser } from './users.interface';
 
 import bcrypt from 'bcrypt';
 import config from '../../config';
@@ -33,19 +33,25 @@ const addressSchema = new Schema<TAddress>({
   },
 });
 
-const userSchema = new Schema<TUser>({
+const userSchema = new Schema<TUser, IUserModel>({
   userId: {
     type: Number,
     required: [true, `user id is required`],
+    unique: true,
   },
   username: {
     type: String,
     required: [true, 'User Name is required'],
     unique: true,
     // validate: {
-    //   validator: function (value: string) {
+    //   validator: async function (value: string) {
+    //     const result = await UserModel.findOne({
+    //       username: { $eq: value },
+    //     });
+    //     return result;
+    //     message: '{VALUE} is not unique',
     //   },
-    //   message: '{VALUE} is not unique',
+
     // },
   },
   password: {
@@ -92,19 +98,47 @@ const userSchema = new Schema<TUser>({
 
 userSchema.pre('save', async function (next) {
   const user = this;
-  console.log('pre hook:', this);
+  // console.log('pre hook:', this);
   user.password = await bcrypt.hash(
     user.password,
     Number(config.bcrypt_salt_rounds),
   );
   next();
 });
-
-//post save middleware/hook
-userSchema.post('save', function (doc, next) {
-  console.log(this, 'post hook : we saved our data');
-  doc.password = '';
+userSchema.pre('findOneAndUpdate', async function (next) {
+  const updatedData = this.getUpdate() as { $set?: TUser }; //This is an object type in TypeScript. It indicates that the object may have a $set property, and if it does, the value of that property should be of type TUser.
+  const password = updatedData.$set?.password as string;
+  // console.log(
+  //   '\npre hook of updateone operation:',
+  //   updatedData,
+  //   'akdjksd:',
+  //   password,
+  // );
+  if (password) {
+    updatedData.$set!.password = await bcrypt.hash(
+      password,
+      Number(config.bcrypt_salt_rounds),
+    );
+  }
   next();
 });
 
-export const UserModel = model<TUser>('User', userSchema);
+// //post save middleware/hook
+// userSchema.post('save', function (doc, next) {
+//   // console.log(this, 'post hook : we saved our data');
+//   doc.password = '';
+//   next();
+// });
+// //post save middleware/hook
+// userSchema.post('findOneAndUpdate', function (doc, next) {
+//   console.log('\npost hook : we updated our data', doc);
+//   doc.password = '';
+//   next();
+// });
+
+userSchema.statics.isUserExist = async function (id: number) {
+  const result = await UserModel.findOne({ userId: { $eq: id } });
+  return result;
+};
+
+export const UserModel = model<TUser, IUserModel>('User', userSchema);
