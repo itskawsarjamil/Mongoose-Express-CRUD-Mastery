@@ -1,12 +1,28 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response } from 'express';
 import { userServices } from './users.services';
+import {
+  orderValidationSchema,
+  userValidationSchema,
+} from './user.joi.validation';
 
 const createUser = async (req: Request, res: Response) => {
   try {
     const data = req.body;
-    const result = await userServices.createUserintoDB(data);
+
+    const { error, value } = userValidationSchema.validate(data);
+
     // console.log('\nresult from controller:', result);
+    if (error) {
+      res.status(500).json({
+        success: false,
+        message: 'something went wrong.User creation Failed',
+        error: error,
+      });
+    }
+
+    const result = await userServices.createUserintoDB(value);
+
     res.status(200).json({
       success: true,
       message: 'User created successfully',
@@ -118,7 +134,15 @@ const addNewOrder = async (req: Request, res: Response) => {
     const data = req.body;
     // console.log('\n from addNewOrder function of controller:', data);
     const ReqID = parseInt(req.params.userId);
-    const result = await userServices.addNewOrder(ReqID, data);
+    const { error, value } = orderValidationSchema.validate(data);
+    if (error) {
+      res.status(500).json({
+        success: false,
+        message: 'the provided data is not valid',
+        error: error,
+      });
+    }
+    const result = await userServices.addNewOrder(ReqID, value);
     // console.log('\nresult from controller:', result);
     res.status(200).json({
       success: true,

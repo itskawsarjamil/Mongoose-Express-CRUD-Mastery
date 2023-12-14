@@ -1,25 +1,25 @@
-# Run Application Locally
+b# Run Application Locally
 
 ## Prerequisite:
 
 ### install:
 
--> Node.js and npm
--> MongoDB
--> MongoDB compass
+-> Node.js and npm</br>
+-> MongoDB</br>
+-> MongoDB compass</br>
 -> Git
 
 ### Some Steps for Run :
 
-repository clone
-npm install
-setup port and mongoose db uri ink
-setup and connect the mongodb compass
+repository clone</br>
+npm install</br>
+setup port and mongoose db uri ink</br>
+setup and connect the mongodb compass</br>
 
 #### give command to run app:
 
-npx tsc
-node ./dist/server.js
+->npx tsc
+->node ./dist/server.js
 
 ### Access the Application:
 
