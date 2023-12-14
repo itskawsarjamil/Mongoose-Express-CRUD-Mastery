@@ -8,3 +8,7 @@ userRouter.get('/', (req: Request, res: Response) => {
 });
 
 userRouter.post('/users', userController.createUser);
+
+userRouter.get('/users', userController.getAllUsers);
+
+userRouter.get('/users/:userId', userController.getSingleUser);
