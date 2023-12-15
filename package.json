@@ -4,7 +4,7 @@
   "description": "web development level 2 assignment-2",
   "main": "index.js",
   "scripts": {
-    "build": "npx tsc",
+    "build": "tsc",
     "start:production": "node ./dist/server.js",
     "start:development": "ts-node-dev --respawn --transpile-only src/server.ts",
     "lint": "eslint src --ignore-path .eslintignore --ext .ts",
