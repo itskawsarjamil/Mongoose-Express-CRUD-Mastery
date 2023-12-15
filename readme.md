@@ -1,4 +1,4 @@
-b# Run Application Locally
+# Run Application Locally
 
 ## Prerequisite:
 

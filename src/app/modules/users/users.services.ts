@@ -9,7 +9,7 @@ const createUserintoDB = async (userData: TUser) => {
     throw new Error('User already exists!');
   }
   const result = await UserModel.create(userData);
-  const selectedResult = await UserModel.findById(result._id).select({
+  const selectedResult = await UserModel.findOne(result._id).select({
     _id: 0,
     password: 0,
     orders: 0,
@@ -17,10 +17,7 @@ const createUserintoDB = async (userData: TUser) => {
     'fullName._id': 0,
     'address._id': 0,
   });
-  //   .select(
-  //   '-_id -password -orders -__v',
-  // )
-  // console.log('result from service:', selectedResult);
+
   return selectedResult;
 };
 
@@ -108,17 +105,14 @@ const getAllOrders = async (ReqID: number) => {
   }
   const resultedUser = await UserModel.findOne({
     userId: { $eq: ReqID },
-  }).select('orders ');
-  // console.log('\none:', resultedUser);
+  }).select('orders');
   const userObject = resultedUser?.toObject();
-  // console.log('\ntwo:', userObject);
   if (userObject) {
     userObject.orders = userObject.orders.map((order) => {
       const { _id, ...rest } = order;
       return rest;
     });
   }
-  // console.log(userObject?.orders);
   return userObject?.orders;
 };
 

@@ -107,7 +107,7 @@ userSchema.pre('save', async function (next) {
 });
 userSchema.pre('findOneAndUpdate', async function (next) {
   const updatedData = this.getUpdate() as { $set?: TUser }; //This is an object type in TypeScript. It indicates that the object may have a $set property, and if it does, the value of that property should be of type TUser.
-  const password = updatedData.$set?.password as string;
+  const password = updatedData.$set?.password;
   // console.log(
   //   '\npre hook of updateone operation:',
   //   updatedData,

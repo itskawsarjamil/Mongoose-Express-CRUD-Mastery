@@ -11,6 +11,7 @@ export type TAddress = {
   country: string;
 };
 export type TOrder = {
+  _id?: string;
   productName: string;
   price: number;
   quantity: number;
