@@ -13,7 +13,7 @@ userRouter.get('/users', userController.getAllUsers);
 
 userRouter.get('/users/:userId', userController.getSingleUser);
 
-userRouter.patch('/users/:userId', userController.updateAUser);
+userRouter.put('/users/:userId', userController.updateAUser);
 
 userRouter.delete('/users/:userId', userController.deleteAUser);
 
